@@ -1,0 +1,8 @@
+*.exe
+*.htm
+
+/.vs
+/Backup
+
+Debug/
+Release/

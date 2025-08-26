@@ -1,5 +1,5 @@
 // ScreenshotDlg.cpp : 实现文件
-//
+// 主程序窗口
 
 #include "stdafx.h"
 #include "Screenshot.h"
@@ -99,7 +99,7 @@ HCURSOR CScreenshotDlg::OnQueryDragIcon()
 UINT SccreenShot_Thread (LPVOID lpParam)
 {
 	HWND hWndMain = (HWND) lpParam;
-	CCatchScreenDlg dlg;
+	CCatchScreenDlg dlg;  // 截图界面
 	dlg.DoModal();
 
 	::ShowWindow(hWndMain,SW_SHOW);

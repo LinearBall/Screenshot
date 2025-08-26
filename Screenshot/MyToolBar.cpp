@@ -53,7 +53,7 @@ BOOL CMyToolBar::CreateToolBar(HWND hWndParent)
 	Gdiplus::Bitmap * pImage = NULL;
 	for(int i=0;i< 9;i++)
 	{
-		ImageFromIDResource(IDB_RECTANGLE + i,_T("PNG"),pImage);
+		ImageFromIDResource(IDB_RECTANGLE + i,_T("PNG"),pImage); // 逐行获取资源图片，创建工具栏图标
 		HBITMAP pHbitmap=0;;
 		if(pImage)
 		{
