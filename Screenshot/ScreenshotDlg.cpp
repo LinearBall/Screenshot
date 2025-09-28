@@ -6,6 +6,7 @@
 #include "ScreenshotDlg.h"
 
 #include "CatchScreenDlg.h"
+#include "CDiaChild.h"
 
 
 #ifdef _DEBUG
@@ -34,6 +35,7 @@ BEGIN_MESSAGE_MAP(CScreenshotDlg, CDialog)
 	ON_BN_CLICKED(IDC_BTN_START, &CScreenshotDlg::OnBnClickedBtnStart)
 	ON_WM_CTLCOLOR()
 	ON_WM_MOUSEMOVE()
+	ON_BN_CLICKED(IDC_BUTTON1, &CScreenshotDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -114,3 +116,13 @@ void CScreenshotDlg::OnBnClickedBtnStart()
 	//::ShowWindow (GetSafeHwnd(), SW_SHOW);
 }
 
+
+void CScreenshotDlg::OnBnClickedButton1()
+{
+	// 打开CDiaChild
+	CDiaChild dlg1;
+	if (dlg1.DoModal() == IDOK) {
+		MessageBox(TEXT("点击了就OK"), TEXT("提示！"));
+	}
+
+}

@@ -112,6 +112,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CatchScreenDlg.cpp" />
+    <ClCompile Include="CDiaChild.cpp" />
     <ClCompile Include="MyEdit.cpp" />
     <ClCompile Include="MyToolBar.cpp" />
     <ClCompile Include="MyTracker.cpp" />
@@ -125,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CatchScreenDlg.h" />
+    <ClInclude Include="CDiaChild.h" />
     <ClInclude Include="MyEdit.h" />
     <ClInclude Include="MyToolBar.h" />
     <ClInclude Include="MyTracker.h" />

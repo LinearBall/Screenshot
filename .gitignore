@@ -1,8 +1,12 @@
 *.exe
 *.htm
+*.rar
+*.zip
+*.7z
 
 /.vs
 /Backup
 
+sudami/
 Debug/
 Release/

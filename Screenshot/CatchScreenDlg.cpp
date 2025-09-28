@@ -441,6 +441,92 @@ HBITMAP CCatchScreenDlg::CopyScreenToBitmap(LPRECT lpRect, BOOL bSave)
 	return hBitmap;
 }
 
+void CCatchScreenDlg::SavePNGToDisk(const CRect& rectToSave, CWnd* pParent)
+{
+	// 选择保存路径（默认 PNG）
+	CFileDialog dlg(FALSE, _T("png"), NULL, OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST,
+		_T("PNG 图片 (*.png)\0*.png\0所有文件 (*.*)\0*.*\0\0"), pParent);
+	dlg.m_ofn.lpstrTitle = _T("保存截图为 PNG");   // 设置标题
+	if (dlg.DoModal() == IDOK)
+	{
+		CString filePath = dlg.GetPathName();
+		// 确保扩展名为 .png  如果扩展名最后不含png就补上png
+		if (!PathMatchSpec(filePath, _T("*.png")))
+		{
+			PathRemoveExtension(filePath.GetBuffer());
+			filePath.ReleaseBuffer();
+			filePath += _T(".png");   // 保存地址最后补上png
+		}
+
+		// 以 bSave=TRUE 的方式从已缓存的全屏位图中裁剪当前矩形
+		// 这里假设有全局或外部函数 CopyScreenToBitmap
+		HBITMAP hBmpToSave = CopyScreenToBitmap((LPRECT)&rectToSave, TRUE);
+		if (hBmpToSave)
+		{
+			// 定义内联函数，保存到 PNG（路径按 GB2312 校正）
+			auto EnsureGb2312Path = [](const CString& inPath)->CString {
+#ifdef _UNICODE
+				int required = ::WideCharToMultiByte(936, 0, inPath, -1, NULL, 0, NULL, NULL);
+				CStringA ansiBuf;
+				LPSTR p = ansiBuf.GetBuffer(required);
+				::WideCharToMultiByte(936, 0, inPath, -1, p, required, NULL, NULL);
+				ansiBuf.ReleaseBuffer();
+				int wreq = ::MultiByteToWideChar(936, 0, ansiBuf, -1, NULL, 0);
+				CString out;
+				LPWSTR pw = out.GetBuffer(wreq);
+				::MultiByteToWideChar(936, 0, ansiBuf, -1, pw, wreq);
+				out.ReleaseBuffer();
+				return out;
+#else
+				// 非 Unicode 工程，路径已为本地 ACP(通常为 GB2312)
+				return inPath;
+#endif
+				};
+
+			CString gbPath = EnsureGb2312Path(filePath);
+
+			auto GetEncoderClsid = [](const WCHAR* format, CLSID* pClsid)->BOOL {
+				UINT  num = 0;          // number of image encoders
+				UINT  size = 0;         // size of the image encoder array in bytes
+				GetImageEncodersSize(&num, &size);
+				if (size == 0)
+					return FALSE;
+				std::unique_ptr<BYTE[]> pImageCodecInfo(new BYTE[size]);
+				if (!pImageCodecInfo)
+					return FALSE;
+				ImageCodecInfo* pInfo = (ImageCodecInfo*)pImageCodecInfo.get();
+				GetImageEncoders(num, size, pInfo);
+				for (UINT j = 0; j < num; ++j)  // 遍历所有编码器
+				{
+					if (wcscmp(pInfo[j].MimeType, L"image/png") == 0)
+					{
+						*pClsid = pInfo[j].Clsid;
+						return TRUE;   // 找到MimeType == "image/png" 的编码器，获取其 Clsid
+					}
+				}
+				return FALSE;
+				};
+
+			CLSID pngClsid;
+			if (GetEncoderClsid(L"image/png", &pngClsid))
+			{
+				Gdiplus::Bitmap bmp(hBmpToSave, NULL);
+				Status st = bmp.Save(gbPath, &pngClsid, NULL);
+				if (st != Ok)
+				{
+					AfxMessageBox(_T("保存 PNG 失败"));
+				}
+			}
+			else
+			{
+				AfxMessageBox(_T("未找到 PNG 编码器"));
+			}
+
+			DeleteObject(hBmpToSave);
+		}
+	}
+}
+
 // 显示操作提示信息
 void CCatchScreenDlg::UpdateTipString()
 {
@@ -658,90 +744,7 @@ BOOL CCatchScreenDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 			AfxMessageBox(_T("撤销"));
 			break;
 		case MyToolBar_ID +6:
-			{
-				// 选择保存路径（默认 PNG）
-				CFileDialog dlg(FALSE, _T("png"), NULL,
-					OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST,
-					_T("PNG 图片 (*.png)\0*.png\0所有文件 (*.*)\0*.*\0\0"), this);
-				dlg.m_ofn.lpstrTitle = _T("保存截图为 PNG");   // 设置标题
-				if (dlg.DoModal() == IDOK)
-				{
-					CString filePath = dlg.GetPathName();
-					// 确保扩展名为 .png  如果扩展名最后不含png就补上png
-					if (!PathMatchSpec(filePath, _T("*.png")))
-					{
-						PathRemoveExtension(filePath.GetBuffer());
-						filePath.ReleaseBuffer();
-						filePath += _T(".png");   // 保存地址最后补上png
-					}
-
-					// 以 bSave=TRUE 的方式从已缓存的全屏位图中裁剪当前矩形
-					HBITMAP hBmpToSave = CopyScreenToBitmap(m_rectTracker.m_rect, TRUE);
-					if (hBmpToSave)
-					{
-						// 保存到 PNG（路径按 GB2312 校正）
-						auto EnsureGb2312Path = [](const CString& inPath)->CString {
-#ifdef _UNICODE
-							int required = ::WideCharToMultiByte(936, 0, inPath, -1, NULL, 0, NULL, NULL);
-							CStringA ansiBuf;
-							LPSTR p = ansiBuf.GetBuffer(required);
-							::WideCharToMultiByte(936, 0, inPath, -1, p, required, NULL, NULL);
-							ansiBuf.ReleaseBuffer();
-							int wreq = ::MultiByteToWideChar(936, 0, ansiBuf, -1, NULL, 0);
-							CString out;
-							LPWSTR pw = out.GetBuffer(wreq);
-							::MultiByteToWideChar(936, 0, ansiBuf, -1, pw, wreq);
-							out.ReleaseBuffer();
-							return out;
-#else
-							// 非 Unicode 工程，路径已为本地 ACP(通常为 GB2312)
-							return inPath;
-#endif
-						};
-
-						CString gbPath = EnsureGb2312Path(filePath);
-
-						auto GetEncoderClsid = [](const WCHAR* format, CLSID* pClsid)->BOOL {
-							UINT  num = 0;          // number of image encoders
-							UINT  size = 0;         // size of the image encoder array in bytes
-							GetImageEncodersSize(&num, &size);
-							if (size == 0)
-								return FALSE;
-							std::unique_ptr<BYTE[]> pImageCodecInfo(new BYTE[size]);
-							if (!pImageCodecInfo)
-								return FALSE;
-							ImageCodecInfo* pInfo = (ImageCodecInfo*)pImageCodecInfo.get();
-							GetImageEncoders(num, size, pInfo);
-							for (UINT j = 0; j < num; ++j)
-							{
-								if (wcscmp(pInfo[j].MimeType, L"image/png") == 0)
-								{
-									*pClsid = pInfo[j].Clsid;
-									return TRUE;
-								}
-							}
-							return FALSE;
-						};
-
-						CLSID pngClsid;
-						if (GetEncoderClsid(L"image/png", &pngClsid))
-						{
-							Gdiplus::Bitmap bmp(hBmpToSave, NULL);
-							Status st = bmp.Save(gbPath, &pngClsid, NULL);
-							if (st != Ok)
-							{
-								AfxMessageBox(_T("保存 PNG 失败"));
-							}
-						}
-						else
-						{
-							AfxMessageBox(_T("未找到 PNG 编码器"));
-						}
-
-						DeleteObject(hBmpToSave);
-					}
-				}
-			}
+			SavePNGToDisk(m_rectTracker.m_rect, this);
 			PostQuitMessage(0);
 			break;
 		case MyToolBar_ID +7:

@@ -16,13 +16,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Chinese (P.R.C.) resources
+// 中文(简体，中国) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
-#ifdef _WIN32
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 #pragma code_page(936)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -72,6 +70,7 @@ END
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\Screenshot.ico"
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Dialog
@@ -83,7 +82,8 @@ EXSTYLE WS_EX_APPWINDOW
 CAPTION "Screenshot"
 FONT 9, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    PUSHBUTTON      "截图",IDC_BTN_START,65,22,50,14
+    PUSHBUTTON      "截图",IDC_BTN_START,26,22,50,14
+    PUSHBUTTON      "打开对话框",IDC_BUTTON1,99,22,50,14
 END
 
 IDD_DIALOGFORIMG DIALOGEX 0, 0, 169, 140
@@ -92,6 +92,15 @@ EXSTYLE WS_EX_TRANSPARENT
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     EDITTEXT        IDC_EDIT1,14,20,137,93,ES_MULTILINE | ES_READONLY | NOT WS_BORDER
+END
+
+IDD_DIALOG1 DIALOGEX 0, 0, 309, 176
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,198,155,50,14
+    PUSHBUTTON      "取消",IDCANCEL,252,155,50,14
 END
 
 
@@ -140,7 +149,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_SCREENSHOT_DIALOG, DIALOG
     BEGIN
@@ -157,6 +166,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 133
     END
+
+    IDD_DIALOG1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 302
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -168,21 +185,32 @@ END
 
 IDB_BITMAP_BK           BITMAP                  "res\\brackground.bmp"
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // PNG
 //
 
 IDB_ARROW               PNG                     "res\\Arrow.png"
+
 IDB_RECTANGLE           PNG                     "res\\Rectangle.png"
+
 IDB_CIRCLE              PNG                     "res\\Circle.png"
+
 IDB_BRUSH               PNG                     "res\\Brush.PNG"
+
 IDB_MOSAIC              PNG                     "res\\Mosaic.png"
+
 IDB_TEXT                PNG                     "res\\Text.png"
+
 IDB_UNDO                PNG                     "res\\Undo.png"
+
 IDB_SAVE                PNG                     "res\\Save.png"
+
 IDB_EXIT                PNG                     "res\\Exit.png"
+
 IDB_FINISH              PNG                     "res\\Finish.png"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -190,7 +218,24 @@ IDB_FINISH              PNG                     "res\\Finish.png"
 //
 
 IDC_CURSOR1             CURSOR                  "res\\arrow_m.cur"
-#endif    // Chinese (P.R.C.) resources
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_SCREENSHOT_DIALOG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG1 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+#endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
