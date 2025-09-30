@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
     <ProjectGuid>{24E39ACB-AB81-485D-8D36-749B3F5EC1E8}</ProjectGuid>
     <RootNamespace>Screenshot</RootNamespace>
     <Keyword>MFCProj</Keyword>
@@ -18,14 +19,14 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>Dynamic</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>Dynamic</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -40,7 +41,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <_ProjectFileVersion>15.0.27924.0</_ProjectFileVersion>
+    <_ProjectFileVersion>17.0.36414.14</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
@@ -111,6 +112,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CatchScreenDlg.cpp" />
+    <ClCompile Include="CDiaChild.cpp" />
     <ClCompile Include="MyEdit.cpp" />
     <ClCompile Include="MyToolBar.cpp" />
     <ClCompile Include="MyTracker.cpp" />
@@ -121,10 +123,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Toolbar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CatchScreenDlg.h" />
+    <ClInclude Include="CDiaChild.h" />
     <ClInclude Include="MyEdit.h" />
     <ClInclude Include="MyToolBar.h" />
     <ClInclude Include="MyTracker.h" />
@@ -134,29 +136,32 @@
     <ClInclude Include="ScreenshotDlg.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="Toolbar.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
-    <None Include="res\Arrow.ico" />
-    <None Include="res\Arrow.png" />
+    <Image Include="res\Arrow.ico" />
+    <Image Include="res\Arrow.png" />
+    <Image Include="res\brackground.bmp" />
+    <Image Include="res\Brush.PNG" />
+    <Image Include="res\Circle.png" />
+    <Image Include="res\Exit.png" />
+    <Image Include="res\Finish.png" />
+    <Image Include="res\Mosaic.png" />
+    <Image Include="res\Rectangle.png" />
+    <Image Include="res\Save.png" />
+    <Image Include="res\Screenshot.ico" />
+    <Image Include="res\Text.png" />
+    <Image Include="res\toolbar1.bmp" />
+    <Image Include="res\Undo.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="res\arrow_m.cur" />
-    <None Include="res\brackground.bmp" />
-    <None Include="res\Brush.PNG" />
-    <None Include="res\Circle.png" />
-    <None Include="res\Exit.png" />
-    <None Include="res\Finish.png" />
-    <None Include="res\Mosaic.png" />
-    <None Include="res\Rectangle.png" />
-    <None Include="res\Save.png" />
-    <None Include="res\Screenshot.ico" />
     <None Include="res\Screenshot.rc2" />
-    <None Include="res\Text.png" />
-    <None Include="res\toolbar1.bmp" />
-    <None Include="res\Undo.png" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Screenshot.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

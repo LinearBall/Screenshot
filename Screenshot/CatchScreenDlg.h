@@ -22,7 +22,7 @@ class CCatchScreenDlg : public CDialog
 {
 public:
 	
-	CCatchScreenDlg(CWnd* pParent = NULL);	
+	CCatchScreenDlg(CWnd* pParent = NULL);
 	
 	enum { IDD = IDD_DIALOGFORIMG };
 	CMyEdit	m_tipEdit;
@@ -52,6 +52,7 @@ public:
 
 public:
 	HBITMAP CopyScreenToBitmap(LPRECT lpRect,BOOL bSave=FALSE);   /* 拷贝桌面到位图 */
+	void SavePNGToDisk(const CRect& rectToSave, CWnd* pParent);
 	void UpdateTipString();                            //显示操作提示信息
 	void DrawMessage(CRect &inRect,CDC * pDC);       //显示截取矩形信息
 	void InvalidateRgnWindow();                        //重画窗口
@@ -83,6 +84,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////

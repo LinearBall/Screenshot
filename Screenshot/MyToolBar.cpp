@@ -34,13 +34,30 @@ BOOL ImageFromIDResource(UINT nID, LPCTSTR sTR, Gdiplus::Bitmap * & pImg)
 CMyToolBar::CMyToolBar()
 {
 	m_hImageList = NULL;
-	m_hWnd_toolbar = 0;
-	m_hWndParent = 0;
+	m_hWnd_toolbar = NULL;
+	m_hWndParent = NULL; 
+	m_oldWndProc = NULL;
 }
 
 CMyToolBar::~CMyToolBar(void)
 {
-	ImageList_Destroy(m_hImageList);
+	// 【关键】先恢复原窗口过程，再销毁资源
+	if (m_hWnd_toolbar && ::IsWindow(m_hWnd_toolbar))
+	{
+		if (m_oldWndProc)
+		{
+			::SetWindowLongPtr(m_hWnd_toolbar, GWLP_WNDPROC, (LONG_PTR)m_oldWndProc);
+			::SetWindowLongPtr(m_hWnd_toolbar, GWLP_USERDATA, 0);  // 清除 this 指针
+		}
+		::DestroyWindow(m_hWnd_toolbar);  // 显式销毁窗口
+		m_hWnd_toolbar = NULL;
+	}
+
+	if (m_hImageList)
+	{
+		ImageList_Destroy(m_hImageList);
+		m_hImageList = NULL;
+	}
 }
 
 BOOL CMyToolBar::CreateToolBar(HWND hWndParent)
@@ -53,7 +70,7 @@ BOOL CMyToolBar::CreateToolBar(HWND hWndParent)
 	Gdiplus::Bitmap * pImage = NULL;
 	for(int i=0;i< 9;i++)
 	{
-		ImageFromIDResource(IDB_RECTANGLE + i,_T("PNG"),pImage);
+		ImageFromIDResource(IDB_RECTANGLE + i,_T("PNG"),pImage); // 逐行获取资源图片，创建工具栏图标
 		HBITMAP pHbitmap=0;;
 		if(pImage)
 		{
@@ -97,12 +114,21 @@ BOOL CMyToolBar::CreateToolBar(HWND hWndParent)
 		::SendMessage(m_hWnd_toolbar,TB_ADDBUTTONS, 1, (LPARAM) &tbbutton);
 	}
 	::SendMessage(m_hWnd_toolbar, TB_AUTOSIZE, 0, 0); 
+
+	// 添加子类化，拦截消息
+	m_oldWndProc = (WNDPROC)::SetWindowLongPtr(m_hWnd_toolbar, GWLP_WNDPROC, (LONG_PTR)ToolBarWndProc);
+	::SetWindowLongPtr(m_hWnd_toolbar, GWLP_USERDATA, (LONG_PTR)this);
 	return TRUE;
 }
 
 HWND CMyToolBar::GetHWND()
 {
 	return m_hWnd_toolbar;
+}
+
+HWND CMyToolBar::GetParentHWND()
+{
+	return m_hWndParent;
 }
 
 void CMyToolBar::AddChildStyle()
@@ -145,4 +171,28 @@ void CMyToolBar::SetShowPlace(int nCurPointX,int nCurPointY)
 	RECT rtWin = {0};
 	::GetWindowRect(m_hWnd_toolbar,&rtWin);
 	::SetWindowPos(m_hWnd_toolbar,HWND_TOP,nCurPointX - (rtWin.right-rtWin.left),nCurPointY + 2,0,0,SWP_NOSIZE|SWP_SHOWWINDOW);
+}
+
+LRESULT CALLBACK CMyToolBar::ToolBarWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	CMyToolBar* pThis = (CMyToolBar*)::GetWindowLongPtr(hwnd, GWLP_USERDATA);
+	if (pThis && ::IsWindow(pThis->m_hWndParent))
+	{
+		if (msg == WM_KEYDOWN && wParam == VK_ESCAPE)
+		{
+			// 将 ESC 键消息转发给父窗口
+			if (pThis && pThis->m_hWndParent)
+			{
+				::PostMessage(pThis->m_hWndParent, WM_KEYDOWN, VK_ESCAPE, lParam);
+				return 0;
+			}
+		}
+
+		// 调用原窗口过程处理其他消息
+		if (pThis && pThis->m_oldWndProc)
+		{
+			return ::CallWindowProc(pThis->m_oldWndProc, hwnd, msg, wParam, lParam);
+		}
+	}
+	return ::DefWindowProc(hwnd, msg, wParam, lParam);
 }

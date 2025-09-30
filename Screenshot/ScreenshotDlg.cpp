@@ -1,11 +1,12 @@
 // ScreenshotDlg.cpp : 实现文件
-//
+// 主程序窗口
 
 #include "stdafx.h"
 #include "Screenshot.h"
 #include "ScreenshotDlg.h"
 
 #include "CatchScreenDlg.h"
+#include "CDiaChild.h"
 
 
 #ifdef _DEBUG
@@ -34,6 +35,7 @@ BEGIN_MESSAGE_MAP(CScreenshotDlg, CDialog)
 	ON_BN_CLICKED(IDC_BTN_START, &CScreenshotDlg::OnBnClickedBtnStart)
 	ON_WM_CTLCOLOR()
 	ON_WM_MOUSEMOVE()
+	ON_BN_CLICKED(IDC_BUTTON1, &CScreenshotDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -96,21 +98,34 @@ HCURSOR CScreenshotDlg::OnQueryDragIcon()
 //----------------------------------------------------------------------
 // 线程函数,用来截图
 //
-UINT SccreenShot_Thread (LPVOID lpParam)
-{
-	HWND hWndMain = (HWND) lpParam;
-	CCatchScreenDlg dlg;
-	dlg.DoModal();
-
-	::ShowWindow(hWndMain,SW_SHOW);
-	return 0;
-}
+//UINT SccreenShot_Thread (LPVOID lpParam)
+//{
+//	HWND hWndMain = (HWND) lpParam;
+//	CCatchScreenDlg dlg;  // 截图界面
+//	dlg.DoModal();
+//
+//	::ShowWindow(hWndMain,SW_SHOW);
+//	return 0;
+//}
 
 void CScreenshotDlg::OnBnClickedBtnStart()
 {
 	::ShowWindow (m_hWnd, SW_HIDE);
 	//使得被激活窗口出现在前景           
-	::AfxBeginThread (SccreenShot_Thread, (LPVOID)GetSafeHwnd());
-	//::ShowWindow (GetSafeHwnd(), SW_SHOW);
+	//::AfxBeginThread (SccreenShot_Thread, (LPVOID)GetSafeHwnd());
+	Sleep(200);
+	CCatchScreenDlg dlg;  // 截图界面
+	dlg.DoModal();
+	::ShowWindow (GetSafeHwnd(), SW_SHOW);
 }
 
+
+void CScreenshotDlg::OnBnClickedButton1()
+{
+	// 打开CDiaChild
+	CDiaChild dlg1;
+	if (dlg1.DoModal() == IDOK) {
+		MessageBox(TEXT("点击了就OK"), TEXT("提示！"));
+	}
+
+}
