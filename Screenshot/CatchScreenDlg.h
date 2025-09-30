@@ -22,7 +22,7 @@ class CCatchScreenDlg : public CDialog
 {
 public:
 	
-	CCatchScreenDlg(CWnd* pParent = NULL);	
+	CCatchScreenDlg(CWnd* pParent = NULL);
 	
 	enum { IDD = IDD_DIALOGFORIMG };
 	CMyEdit	m_tipEdit;
@@ -84,6 +84,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////

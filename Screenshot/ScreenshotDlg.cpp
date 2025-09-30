@@ -98,22 +98,25 @@ HCURSOR CScreenshotDlg::OnQueryDragIcon()
 //----------------------------------------------------------------------
 // 线程函数,用来截图
 //
-UINT SccreenShot_Thread (LPVOID lpParam)
-{
-	HWND hWndMain = (HWND) lpParam;
-	CCatchScreenDlg dlg;  // 截图界面
-	dlg.DoModal();
-
-	::ShowWindow(hWndMain,SW_SHOW);
-	return 0;
-}
+//UINT SccreenShot_Thread (LPVOID lpParam)
+//{
+//	HWND hWndMain = (HWND) lpParam;
+//	CCatchScreenDlg dlg;  // 截图界面
+//	dlg.DoModal();
+//
+//	::ShowWindow(hWndMain,SW_SHOW);
+//	return 0;
+//}
 
 void CScreenshotDlg::OnBnClickedBtnStart()
 {
 	::ShowWindow (m_hWnd, SW_HIDE);
 	//使得被激活窗口出现在前景           
-	::AfxBeginThread (SccreenShot_Thread, (LPVOID)GetSafeHwnd());
-	//::ShowWindow (GetSafeHwnd(), SW_SHOW);
+	//::AfxBeginThread (SccreenShot_Thread, (LPVOID)GetSafeHwnd());
+	Sleep(200);
+	CCatchScreenDlg dlg;  // 截图界面
+	dlg.DoModal();
+	::ShowWindow (GetSafeHwnd(), SW_SHOW);
 }
 
 

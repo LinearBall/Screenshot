@@ -100,7 +100,7 @@ BOOL CCatchScreenDlg::OnInitDialog()
 	UpdateTipString();
 	SetEidtWndText();
 
-	((CScreenshotApp *)AfxGetApp())->m_hwndDlg = AfxGetMainWnd()->GetSafeHwnd();
+	((CScreenshotApp*)AfxGetApp())->m_hwndDlg = m_hWnd;
 	return TRUE;
 }
  
@@ -307,7 +307,8 @@ void CCatchScreenDlg::OnRButtonUp(UINT nFlags, CPoint point)
 	else
 	{
 		//关闭程序
-		PostQuitMessage(0);
+		// PostQuitMessage(0);
+		OnCancel();
 	}
 
 	CDialog::OnRButtonUp(nFlags, point);
@@ -728,7 +729,7 @@ BOOL CCatchScreenDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 		case MyToolBar_ID:
 			AfxMessageBox(_T("矩形"));
 			break;
-		case MyToolBar_ID+1:
+		case MyToolBar_ID +1:
 			AfxMessageBox(_T("圆形"));
 			break;
 		case MyToolBar_ID +2:
@@ -745,14 +746,14 @@ BOOL CCatchScreenDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 			break;
 		case MyToolBar_ID +6:
 			SavePNGToDisk(m_rectTracker.m_rect, this);
-			PostQuitMessage(0);
+			OnCancel();
 			break;
 		case MyToolBar_ID +7:
-			PostQuitMessage(0);
+			OnCancel();
 			break;
 		case MyToolBar_ID +8:
 			CopyScreenToBitmap(m_rectTracker.m_rect, TRUE);
-			PostQuitMessage(0);
+			OnCancel();
 			break;
 		default:
 			bHandle = false;
@@ -764,6 +765,19 @@ BOOL CCatchScreenDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 	{
 		return CDialog::OnCommand(wParam,lParam);
 	}
+}
+
+BOOL CCatchScreenDlg::PreTranslateMessage(MSG* pMsg)
+{
+	if (pMsg->message == WM_KEYDOWN)
+	{
+		if (pMsg->wParam == VK_ESCAPE)
+		{
+			OnCancel();
+			return TRUE;
+		}
+	}
+	return CDialog::PreTranslateMessage(pMsg);
 }
 
 ////////////////////////////////// END OF FILE ///////////////////////////////////////
